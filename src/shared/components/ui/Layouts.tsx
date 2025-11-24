@@ -1,7 +1,10 @@
 import { HTMLAttributes, ReactNode, forwardRef, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '../../utils/cn';
 import { getRandomRotation } from '../../utils/gamingIcons';
+
+// Helper type to exclude conflicting animation handlers from HTMLAttributes when using with motion
+type MotionDivProps = Omit<HTMLAttributes<HTMLDivElement>, keyof HTMLMotionProps<'div'> | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> & Partial<HTMLMotionProps<'div'>>;
 
 interface MasonryGridProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -172,7 +175,8 @@ export const FloatingBlocks = forwardRef<HTMLDivElement, FloatingBlocksProps>(
 
 FloatingBlocks.displayName = 'FloatingBlocks';
 
-interface LayoutBlockProps extends HTMLAttributes<HTMLDivElement> {
+interface LayoutBlockProps extends MotionDivProps {
+  children?: ReactNode;
   size?: 'small' | 'medium' | 'large' | 'xlarge';
   rowSpan?: 1 | 2 | 3;
   colSpan?: 1 | 2 | 3;

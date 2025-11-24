@@ -14,16 +14,16 @@ import { cn } from '@/shared/utils/cn';
 import { motion } from 'framer-motion';
 
 export function ThemeColorPicker() {
-  const { colorAccent, setColorAccent, themeBase } = useTheme();
+  const { colorAccent, setColorAccent } = useTheme();
 
   const handleAccentSelect = (accent: ColorAccent) => {
     setColorAccent(accent);
   };
 
   // Filtrar accents disponibles (excluir 'default' si es necesario)
-  const availableAccents: ColorAccent[] = (Object.keys(colorAccents) as ColorAccent[]).filter(
-    (acc) => acc !== 'default' || themeBase === 'light'
-  );
+  // const availableAccents: ColorAccent[] = (Object.keys(colorAccents) as ColorAccent[]).filter(
+  //   (acc) => acc !== 'default' || themeBase === 'light'
+  // );
 
   return (
     <DropdownMenu>

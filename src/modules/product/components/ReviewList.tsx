@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import { useReviewsByProduct } from '@/core/query/queries/reviews.queries';
 import { Card, CardContent, CardHeader } from '@/shared/components/ui/Card';
 import { Separator } from '@/shared/components/ui/Separator';
@@ -54,7 +54,7 @@ interface ReviewListProps {
 }
 
 export function ReviewList({ productId }: ReviewListProps) {
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
   const { data, isLoading, error } = useReviewsByProduct(productId, { page, limit: 10 });
 
   if (isLoading) {

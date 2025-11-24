@@ -1,8 +1,12 @@
 import { HTMLAttributes, ReactNode, forwardRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '../../utils/cn';
 
-interface SectionProps extends HTMLAttributes<HTMLDivElement> {
+// Helper types to exclude conflicting animation handlers when using with motion components
+type MotionSectionProps = Omit<HTMLAttributes<HTMLElement>, keyof HTMLMotionProps<'section'> | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> & Partial<HTMLMotionProps<'section'>>;
+type MotionDivProps = Omit<HTMLAttributes<HTMLDivElement>, keyof HTMLMotionProps<'div'> | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> & Partial<HTMLMotionProps<'div'>>;
+
+interface SectionProps extends MotionSectionProps {
   title?: string;
   subtitle?: string;
   variant?: 'default' | 'accent' | 'highlight';
@@ -101,7 +105,8 @@ export const SectionGrid = forwardRef<HTMLDivElement, SectionGridProps>(
 
 SectionGrid.displayName = 'SectionGrid';
 
-interface SectionItemProps extends HTMLAttributes<HTMLDivElement> {
+interface SectionItemProps extends MotionDivProps {
+  children?: ReactNode;
   hover?: boolean;
 }
 

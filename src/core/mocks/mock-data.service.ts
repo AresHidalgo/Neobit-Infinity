@@ -38,7 +38,7 @@ class MockDataService {
     }
   }
 
-  async handleGet<T>(url: string, _config?: AxiosRequestConfig): Promise<ApiResponse<T> | PaginatedResponse<T>> {
+  async handleGet<_T = any>(url: string, _config?: AxiosRequestConfig): Promise<any> {
     const path = this.getUrlPath(url);
     const params = this.extractParams(url);
 
@@ -262,7 +262,7 @@ class MockDataService {
     throw createMockError('NOT_FOUND', 'Route not found', 404);
   }
 
-  async handlePost<T>(url: string, data?: any, _config?: AxiosRequestConfig): Promise<ApiResponse<T> | PaginatedResponse<T[]>> {
+  async handlePost<_T = any>(url: string, data?: any, _config?: AxiosRequestConfig): Promise<any> {
     const path = this.getUrlPath(url);
 
     // Auth routes
@@ -560,7 +560,7 @@ class MockDataService {
     throw createMockError('NOT_FOUND', 'Route not found', 404);
   }
 
-  async handlePut<T>(url: string, data?: any, _config?: AxiosRequestConfig): Promise<ApiResponse<T> | PaginatedResponse<T[]>> {
+  async handlePut<_T = any>(url: string, data?: any, _config?: AxiosRequestConfig): Promise<any> {
     const path = this.getUrlPath(url);
 
     // Cart update
@@ -641,11 +641,11 @@ class MockDataService {
     throw createMockError('NOT_FOUND', 'Route not found', 404);
   }
 
-  async handlePatch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T> | PaginatedResponse<Array<T>>> {
-    return this.handlePut<T>(url, data, config);
+  async handlePatch<_T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<any> {
+    return this.handlePut<_T>(url, data, config);
   }
 
-  async handleDelete<T>(url: string, _config?: AxiosRequestConfig): Promise<ApiResponse<T> | PaginatedResponse<T[]>> {
+  async handleDelete<_T = any>(url: string, _config?: AxiosRequestConfig): Promise<any> {
     const path = this.getUrlPath(url);
 
     // Cart delete

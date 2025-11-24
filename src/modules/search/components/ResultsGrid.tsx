@@ -8,7 +8,7 @@ import { AspectRatio } from '@/shared/components/ui/AspectRatio';
 import { Text } from '@/shared/components/ui/Typography';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import { motion } from 'framer-motion';
-import { Star, Heart } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 interface ResultsGridProps {
   products: Product[];

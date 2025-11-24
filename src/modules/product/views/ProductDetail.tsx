@@ -14,7 +14,7 @@ import { Separator } from '@/shared/components/ui/Separator';
 import { LoadingSpinner } from '@/shared/components/ui/LoadingSpinner';
 import { Container } from '@/shared/components/ui/Container';
 import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
-import { Heading1, Heading2, Text } from '@/shared/components/ui/Typography';
+import { Heading1, Text } from '@/shared/components/ui/Typography';
 import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
 import { Star, Package, Truck, Shield, CheckCircle2 } from 'lucide-react';
 import { routesConfig } from '@/config/app.config';

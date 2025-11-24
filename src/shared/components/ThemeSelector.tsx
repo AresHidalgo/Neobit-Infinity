@@ -11,7 +11,6 @@ import {
   DropdownMenuLabel,
 } from '@/shared/components/ui/DropdownMenu';
 import { Moon, Sun, Monitor, Check } from 'lucide-react';
-import { cn } from '@/shared/utils/cn';
 import { ThemeColorPicker } from './ThemeColorPicker';
 
 export function ThemeSelector() {

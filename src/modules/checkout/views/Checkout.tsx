@@ -15,7 +15,7 @@ import { useCart } from '@/core/query/queries/cart.queries';
 import { routesConfig } from '@/config/app.config';
 import { toast } from 'sonner';
 import { Order } from '@/types/order.type';
-import { CheckCircle2, Circle, ShoppingCart, Truck, CreditCard, CheckCircle } from 'lucide-react';
+import { CheckCircle2, ShoppingCart, Truck, CreditCard, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type CheckoutStep = 1 | 2 | 3 | 4;

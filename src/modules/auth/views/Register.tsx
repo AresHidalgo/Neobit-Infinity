@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRegister } from "../hooks/useRegister";
-import { AuthLayout } from "@/shared/components/layouts/AuthLayout";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import {
@@ -10,7 +9,6 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/shared/components/ui/Card";
 import { Heading1, Text, Label } from "@/shared/components/ui/Typography";
 import { routesConfig } from "@/config/app.config";
@@ -58,8 +56,7 @@ export function Register() {
     : null;
 
   return (
-    <AuthLayout>
-      <motion.div
+    <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -240,6 +237,5 @@ export function Register() {
         </form>
       </Card>
       </motion.div>
-    </AuthLayout>
   );
 }

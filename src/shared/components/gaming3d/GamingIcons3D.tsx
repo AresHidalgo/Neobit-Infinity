@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Vector3 } from 'three';
 
 export type GamingIcon3DType = 
   | 'gamepad' 
@@ -60,7 +60,7 @@ export function GamingIcon3D({
 
   const floatOffset = useRef(0);
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (!groupRef.current) return;
 
     const group = groupRef.current;

@@ -7,7 +7,7 @@ import { FilterChip } from '../components/FilterChip';
 import { Pagination } from '@/shared/components/ui/Pagination';
 import { Container } from '@/shared/components/ui/Container';
 import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
-import { Heading1, Text } from '@/shared/components/ui/Typography';
+import { Text } from '@/shared/components/ui/Typography';
 import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
 import { categories } from '@/data/categories.mock';
 import { Separator } from '@/shared/components/ui/Separator';

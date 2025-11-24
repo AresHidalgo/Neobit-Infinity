@@ -1,6 +1,6 @@
 import { Container } from '@/shared/components/ui/Container';
 import { Section } from '@/shared/components/ui/Section';
-import { Heading1, Text } from '@/shared/components/ui/Typography';
+import { Text } from '@/shared/components/ui/Typography';
 import { motion } from 'framer-motion';
 import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
 import { Heart, Shield, Zap, Users } from 'lucide-react';

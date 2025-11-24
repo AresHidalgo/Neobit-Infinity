@@ -87,11 +87,6 @@ export function RandomGamingIcons({
       aria-hidden="true"
     >
       {icons.map((icon) => {
-        const sizeClass = 
-          icon.size <= 50 ? 'w-12 h-12' :
-          icon.size <= 80 ? 'w-16 h-16' :
-          icon.size <= 100 ? 'w-20 h-20' :
-          'w-24 h-24';
 
         return (
           <div

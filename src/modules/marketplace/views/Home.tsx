@@ -4,7 +4,6 @@ import { LatestReleases } from '../components/LatestReleases';
 import { CategoryQuick } from '../components/CategoryQuick';
 import { Section } from '@/shared/components/ui/Section';
 import { Container } from '@/shared/components/ui/Container';
-import { AsymmetricGrid } from '@/shared/components/ui/Layouts';
 import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
 import { motion } from 'framer-motion';
 

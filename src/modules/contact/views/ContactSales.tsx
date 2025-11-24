@@ -1,6 +1,6 @@
 import { Container } from '@/shared/components/ui/Container';
 import { Section } from '@/shared/components/ui/Section';
-import { Heading1, Text, Label } from '@/shared/components/ui/Typography';
+import { Text, Label } from '@/shared/components/ui/Typography';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { motion } from 'framer-motion';
