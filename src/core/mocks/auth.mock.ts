@@ -52,7 +52,7 @@ function simulateNetworkDelay(ms: number = 800): Promise<void> {
 export const authMock = {
   login: async (credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> => {
     await simulateNetworkDelay(600);
-    
+
     // Buscar usuario
     const user = mockUsers.find(
       (u) => u.email === credentials.email && u.password === credentials.password
@@ -143,13 +143,13 @@ export const authMock = {
     };
   },
 
-  refreshToken: async (refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> => {
+  refreshToken: async (_refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> => {
     await simulateNetworkDelay(400);
-    
+
     // En producción, verificaríamos el refresh token
     // Por ahora, simplemente generamos uno nuevo
     const accessToken = generateMockToken();
-    
+
     return {
       success: true,
       data: {
@@ -164,12 +164,12 @@ export async function isBackendAvailable(): Promise<boolean> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 segundos timeout
-    
+
     const response = await fetch(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/health', {
       method: 'GET',
       signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
     return response.ok;
   } catch (error) {
