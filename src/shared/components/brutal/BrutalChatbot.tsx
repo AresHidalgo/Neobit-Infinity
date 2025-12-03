@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { BrutalCard } from './BrutalCard';
-import { BrutalButton } from './BrutalButton';
-import { BrutalInput } from './BrutalInput';
 import { MessageSquare, X, Send, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

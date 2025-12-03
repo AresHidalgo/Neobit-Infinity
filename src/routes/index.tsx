@@ -49,8 +49,10 @@ const Login = lazy(() =>
 const Register = lazy(() =>
   import("@/modules/auth/views/Register").then((m) => ({ default: m.Register }))
 );
-const AdminDashboard = lazy(
-  () => import("@/modules/admin/views/AdminDashboard")
+const AdminDashboard = lazy(() =>
+  import("@/modules/admin/views/AdminDashboard").then((m) => ({
+    default: m.AdminDashboard,
+  }))
 );
 const UsersAdmin = lazy(() => import("@/modules/admin/users/UsersAdmin"));
 const ProductsAdmin = lazy(
