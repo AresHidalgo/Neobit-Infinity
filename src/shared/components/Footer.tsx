@@ -52,96 +52,67 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t-[4px] bg-background relative overflow-hidden">
-      <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
-          <div>
-            <h3 className="text-xl font-bold mb-6">Neobit Infinity</h3>
-            <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
-              Your trusted e-commerce platform with AI-powered assistance.
+    <footer className="border-t-4 border-black bg-white relative overflow-hidden">
+      <div className="container mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
+          <div className="col-span-1 md:col-span-2">
+            <h3 className="text-5xl lg:text-7xl font-heading uppercase leading-none mb-6">Neobit<br/><span className="text-neon-green text-stroke-black">Infinity</span></h3>
+            <p className="text-lg lg:text-xl font-mono text-black leading-relaxed max-w-md border-l-4 border-neon-pink pl-6">
+              Tu plataforma de comercio electrónico de confianza con asistencia de IA. Redefiniendo la experiencia de compra.
             </p>
           </div>
           <div>
-            <h4 className="font-bold mb-6 text-lg">Shop</h4>
-            <ul className="space-y-3 text-base">
+            <h4 className="font-heading text-2xl uppercase mb-8 border-b-4 border-black inline-block pb-2">Tienda</h4>
+            <ul className="space-y-4 text-lg font-mono font-bold">
               <li>
                 <Link
                   to={routesConfig.products.search}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-black hover:text-neon-pink hover:translate-x-2 transition-transform inline-block"
                 >
-                  All Products
+                  Todos los Productos
                 </Link>
               </li>
               <li>
                 <Link
                   to={routesConfig.products.search}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-black hover:text-neon-blue hover:translate-x-2 transition-transform inline-block"
                 >
-                  Featured
+                  Destacados
                 </Link>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-6 text-lg">Account</h4>
-            <ul className="space-y-3 text-base">
-              <li>
-                <Link
-                  to={routesConfig.profile}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={routesConfig.orders.list}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Orders
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={routesConfig.wishlist}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Wishlist
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6 text-lg">Support</h4>
-            <ul className="space-y-3 text-base">
+            <h4 className="font-heading text-2xl uppercase mb-8 border-b-4 border-black inline-block pb-2">Soporte</h4>
+            <ul className="space-y-4 text-lg font-mono font-bold">
               <li>
                 <Link
                   to="/help"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-black hover:text-neon-green hover:translate-x-2 transition-transform inline-block"
                 >
-                  Help Center
+                  Centro de Ayuda
                 </Link>
               </li>
               <li>
                 <Link
                   to={routesConfig.contact.index}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-black hover:text-neon-yellow hover:translate-x-2 transition-transform inline-block"
                 >
-                  Contact Us
+                  Contáctanos
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Social Media Section - Refined Minimalist */}
-        <div className="mt-12 pt-12 border-t-[4px] border-foreground/20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+        {/* Social Media Section - Brutalist */}
+        <div className="mt-20 pt-12 border-t-4 border-black">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
             <div>
-              <h4 className="text-lg font-bold uppercase tracking-wide mb-6">
+              <h4 className="text-2xl font-heading uppercase tracking-wide mb-8">
                 Síguenos
               </h4>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
                 {socialLinks.map((social, index) => {
                   const IconComponent = social.icon;
                   return (
@@ -151,32 +122,24 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
-                        "p-3 brutal-border border-[4px] border-foreground/30 bg-background/50 hover:bg-background transition-all duration-300 ease-out group",
-                        social.color
+                        "p-4 border-3 border-black bg-white shadow-brutal hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200",
+                        social.color.replace('hover:neon-text', '')
                       )}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      transition={{ delay: index * 0.05, ease: "easeOut" }}
-                      whileHover={{
-                        scale: 1.1,
-                        rotate: [0, -3, 3, -3, 0],
-                        borderWidth: "6px",
-                        borderColor: "currentColor",
-                        boxShadow: "0 0 12px currentColor",
-                      }}
+                      transition={{ delay: index * 0.1 }}
                       aria-label={social.name}
                     >
-                      <IconComponent className="h-5 w-5 lg:h-6 lg:w-6" />
+                      <IconComponent className="h-6 w-6 text-black" />
                     </motion.a>
                   );
                 })}
               </div>
             </div>
             <div className="text-center md:text-right">
-              <p className="text-base text-muted-foreground">
-                &copy; {new Date().getFullYear()} Neobit Infinity. All rights
-                reserved.
+              <p className="text-base font-mono font-bold text-black uppercase">
+                &copy; {new Date().getFullYear()} DevsCode.<br/>Todos los derechos reservados.
               </p>
             </div>
           </div>

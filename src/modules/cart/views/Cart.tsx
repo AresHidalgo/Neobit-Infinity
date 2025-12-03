@@ -1,184 +1,163 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '@/core/query/queries/cart.queries';
+import { Link } from 'react-router-dom';
 import { useCartStore } from '@/store/cart.store';
-import { CartItem } from '../components/CartItem';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
-import { Button } from '@/shared/components/ui/Button';
-import { Separator } from '@/shared/components/ui/Separator';
-import { LoadingSpinner } from '@/shared/components/ui/LoadingSpinner';
-import { Container } from '@/shared/components/ui/Container';
-import { Heading1, Heading2, Text } from '@/shared/components/ui/Typography';
-import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
-import { ShoppingBag, ArrowLeft } from 'lucide-react';
 import { routesConfig } from '@/config/app.config';
+import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
+import { BrutalButton } from '@/shared/components/brutal/BrutalButton';
+import { BrutalInput } from '@/shared/components/brutal/BrutalInput';
+import { Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Cart() {
-  const navigate = useNavigate();
-  const { data, isLoading, error } = useCart();
-  const cartStore = useCartStore();
+  const { items, removeItem, updateQuantity, total } = useCartStore();
 
-  // Fallback to store if API data not available
-  const cart = data?.success && data.data ? data.data : {
-    items: cartStore.items,
-    subtotal: cartStore.subtotal,
-    tax: cartStore.tax,
-    shipping: cartStore.shipping,
-    discount: cartStore.discount,
-    total: cartStore.total,
-    itemCount: cartStore.itemCount,
-  };
-
-  if (isLoading) {
+  if (items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner />
+      <div className="container mx-auto px-6 py-20 flex flex-col items-center justify-center text-center">
+        <div className="mb-8 p-8 border-4 border-black rounded-full bg-neon-yellow">
+          <ShoppingBag className="w-16 h-16" />
         </div>
+        <h1 className="font-heading text-4xl uppercase mb-4">Tu Carrito Está Vacío</h1>
+        <p className="font-mono text-lg text-gray-500 mb-8 max-w-md">
+          Parece que aún no has agregado ningún producto a tu inventario.
+        </p>
+        <Link to={routesConfig.products.search}>
+          <BrutalButton size="lg">Comenzar a Comprar</BrutalButton>
+        </Link>
       </div>
     );
   }
 
-  if (error || !cart || cart.items.length === 0) {
-    return (
-      <Container className="py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <Card>
-            <CardContent className="py-16 text-center">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-              >
-                <ShoppingBag className="h-20 w-20 mx-auto text-muted-foreground mb-6" />
-              </motion.div>
-              <Heading2 className="mb-3">Your cart is empty</Heading2>
-              <Text size="lg" muted className="mb-8">
-                Start adding products to your cart!
-              </Text>
-              <Link to={routesConfig.products.search}>
-                <Button size="lg">Continue Shopping</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </Container>
-    );
-  }
-
   return (
-    <Container className="py-8">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <Breadcrumbs
-          items={[
-            { label: 'Home', to: routesConfig.home },
-            { label: 'Cart' },
-          ]}
-          className="mb-6"
-        />
+    <div className="container mx-auto px-6 py-12">
+      <h1 className="font-heading text-5xl uppercase mb-12 border-b-4 border-black inline-block">
+        Tu Carrito ({items.length})
+      </h1>
 
-        <div className="flex items-center gap-4 mb-8">
-          <Link to={routesConfig.home}>
-            <Button variant="ghost" size="icon" className="hover:bg-accent">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <Heading1 className="flex-1">Shopping Cart</Heading1>
-          <Text size="lg" muted>({cart.itemCount} {cart.itemCount === 1 ? 'item' : 'items'})</Text>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* Cart Items */}
+        <div className="lg:col-span-8 space-y-6">
+          <AnimatePresence>
+            {items.map((item) => (
+              <motion.div
+                key={item.productId}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                layout
+              >
+                <BrutalCard className="flex flex-col md:flex-row gap-6 items-center p-4">
+                  <div className="w-full md:w-32 aspect-square border-2 border-black bg-gray-100 shrink-0">
+                    <img 
+                      src={item.image || 'https://via.placeholder.com/150'} 
+                      alt={item.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="font-heading text-xl uppercase mb-1">{item.name}</h3>
+                    <p className="font-mono text-sm text-gray-500 mb-2">Variante: Por defecto</p>
+                    <p className="font-mono font-bold text-neon-blue text-lg">
+                      ${item.price.toFixed(2)}
+                    </p>
+                  </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Cart Items */}
-          <motion.div
-            className="lg:col-span-2 space-y-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <AnimatePresence mode="popLayout">
-              {cart.items.map((item, index) => (
-                <motion.div
-                  key={`${item.productId}-${index}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <CartItem item={item} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Order Summary */}
-          <motion.div
-            className="lg:col-span-1"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <Card className="sticky top-24 shadow-lg">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <Text size="sm" muted>Subtotal</Text>
-                    <Text size="sm" weight="medium">${cart.subtotal.toFixed(2)}</Text>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <Text size="sm" muted>Tax</Text>
-                    <Text size="sm" weight="medium">${cart.tax.toFixed(2)}</Text>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <Text size="sm" muted>Shipping</Text>
-                    <Text size="sm" weight="medium">
-                      {cart.shipping > 0 ? `$${cart.shipping.toFixed(2)}` : 'Free'}
-                    </Text>
-                  </div>
-                  {cart.discount > 0 && (
-                    <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-                      <Text size="sm">Discount</Text>
-                      <Text size="sm" weight="medium">-${cart.discount.toFixed(2)}</Text>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center border-2 border-black">
+                      <button 
+                        onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))}
+                        className="px-3 py-1 hover:bg-black hover:text-white transition-colors font-mono font-bold"
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-1 font-mono font-bold border-x-2 border-black min-w-[3rem] text-center">
+                        {item.quantity}
+                      </span>
+                      <button 
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        className="px-3 py-1 hover:bg-black hover:text-white transition-colors font-mono font-bold"
+                      >
+                        +
+                      </button>
                     </div>
-                  )}
-                </div>
+                    <button 
+                      onClick={() => removeItem(item.productId)}
+                      className="p-2 border-2 border-red-500 hover:bg-red-500 hover:text-white transition-colors"
+                      aria-label="Eliminar del carrito"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
 
-                <Separator />
-
-                <div className="flex justify-between">
-                  <Text size="lg" weight="bold">Total</Text>
-                  <Text size="lg" weight="bold">${cart.total.toFixed(2)}</Text>
-                </div>
-
-                <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={() => navigate(routesConfig.checkout)}
-                >
-                  Proceed to Checkout
-                </Button>
-
-                <Link to={routesConfig.products.search} className="block">
-                  <Button variant="outline" className="w-full">
-                    Continue Shopping
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </motion.div>
+                  <div className="font-heading text-2xl">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </div>
+                </BrutalCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
-      </motion.div>
-    </Container>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-4">
+          <BrutalCard className="sticky top-24 bg-neon-yellow border-4 border-black p-8">
+            <h2 className="font-heading text-3xl uppercase mb-8 border-b-4 border-black pb-4">
+              Resumen
+            </h2>
+            
+            <div className="space-y-4 mb-8 font-mono">
+              <div className="flex justify-between text-lg">
+                <span>Subtotal</span>
+                <span className="font-bold">${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-lg">
+                <span>Envío</span>
+                <span className="font-bold">GRATIS</span>
+              </div>
+              <div className="border-t-4 border-black pt-4">
+                <div className="flex justify-between text-2xl font-bold">
+                  <span>Total</span>
+                  <span>${total.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <Link to={routesConfig.checkout}>
+              <BrutalButton 
+                fullWidth 
+                size="lg" 
+                className="bg-black text-white hover:bg-neon-pink hover:text-black mb-4"
+              >
+                Proceder al Pago
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </BrutalButton>
+            </Link>
+
+            <Link to={routesConfig.products.search}>
+              <BrutalButton 
+                fullWidth 
+                variant="outline"
+                className="hover:bg-gray-100"
+              >
+                Continuar Comprando
+              </BrutalButton>
+            </Link>
+
+            {/* Discount Code */}
+            <div className="mt-8 pt-8 border-t-4 border-black">
+              <label className="font-mono font-bold uppercase text-sm mb-2 block">
+                Código de Descuento
+              </label>
+              <div className="flex gap-2">
+                <BrutalInput placeholder="Ingresa código" className="flex-1" />
+                <BrutalButton>Aplicar</BrutalButton>
+              </div>
+            </div>
+          </BrutalCard>
+        </div>
+      </div>
+    </div>
   );
 }
 
+export default Cart;

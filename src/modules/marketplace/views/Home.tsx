@@ -2,100 +2,58 @@ import { HeroBanner } from '../components/HeroBanner';
 import { FeaturedProducts } from '../components/FeaturedProducts';
 import { LatestReleases } from '../components/LatestReleases';
 import { CategoryQuick } from '../components/CategoryQuick';
-import { Section } from '@/shared/components/ui/Section';
 import { Container } from '@/shared/components/ui/Container';
-import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
 import { motion } from 'framer-motion';
+import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
 
 export function Home() {
   return (
-    <div className="relative min-h-screen">
-      {/* Gaming Icons Decorativos de Fondo Globales */}
-      <RandomGamingIcons 
-        density="medium" 
-        minSize={50} 
-        maxSize={100}
-        className="opacity-10"
-      />
+    <div className="relative min-h-screen pb-20">
       
-      {/* Main Content Container - Cohesive Layout */}
-      <div className="relative z-10">
-        {/* Hero Section - Full Width */}
-        <Container className="py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
-          >
-            <HeroBanner />
-          </motion.div>
-        </Container>
-
-        {/* Main Store Content - Cohesive Grid */}
-        <Container className="py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Sidebar - Categories & Promotions */}
-            <div className="lg:col-span-3 space-y-6">
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.5 }}
-              >
-                <Section
-                  title="Categories"
-                  subtitle="Browse by category"
-                  variant="default"
-                  withNeon={true}
-                  className="brutal-border-thick h-full"
-                >
-                  <CategoryQuick />
-                </Section>
-              </motion.div>
-            </div>
-
-            {/* Main Content Area - Featured & Latest */}
-            <div className="lg:col-span-9 space-y-6">
-              {/* Featured Products - Main Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.5 }}
-              >
-                <Section
-                  title="Featured Products"
-                  subtitle="Handpicked for you"
-                  variant="accent"
-                  withNeon={true}
-                  className="brutal-border-thick"
-                >
-                  <FeaturedProducts />
-                </Section>
-              </motion.div>
-
-              {/* Latest Releases - Below Featured */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <Section
-                  title="Latest Releases"
-                  subtitle="New arrivals"
-                  variant="default"
-                  withNeon={true}
-                  className="brutal-border-thick"
-                >
-                  <LatestReleases />
-                </Section>
-              </motion.div>
-            </div>
-          </div>
-        </Container>
+      {/* Marquee Section */}
+      <div className="bg-neon-green border-b-4 border-black overflow-hidden py-3">
+        <div className="animate-marquee whitespace-nowrap font-heading uppercase text-2xl tracking-wider">
+          Nuevos Lanzamientos • Más Vendidos • Edición Limitada • Envío Gratis Mundial • Ofertas Cyber • Nuevos Lanzamientos • Más Vendidos • Edición Limitada • Envío Gratis Mundial •
+        </div>
       </div>
+
+      {/* Hero Section */}
+      <Container className="py-12">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
+        >
+          <HeroBanner />
+        </motion.div>
+
+        {/* Categories Grid */}
+        <div className="mb-20">
+          <h2 className="font-heading text-4xl uppercase mb-8 border-b-4 border-black inline-block">Comprar por Categoría</h2>
+          <CategoryQuick />
+        </div>
+
+        {/* Featured Products */}
+        <div className="mb-20">
+          <div className="flex justify-between items-end mb-8">
+            <h2 className="font-heading text-4xl uppercase border-b-4 border-neon-pink inline-block">Productos Destacados</h2>
+            <span className="font-mono font-bold hidden md:block">/// SELECCIÓN CURADA</span>
+          </div>
+          <BrutalCard className="bg-black p-8 border-neon-pink shadow-[8px_8px_0px_0px_#FF0099]">
+            <FeaturedProducts />
+          </BrutalCard>
+        </div>
+
+        {/* Latest Releases */}
+        <div>
+          <div className="flex justify-between items-end mb-8">
+            <h2 className="font-heading text-4xl uppercase border-b-4 border-neon-blue inline-block">Nuevos Lanzamientos</h2>
+            <span className="font-mono font-bold hidden md:block">/// RECIÉN LLEGADOS</span>
+          </div>
+          <LatestReleases />
+        </div>
+      </Container>
     </div>
   );
 }

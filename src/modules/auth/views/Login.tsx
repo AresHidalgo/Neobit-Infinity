@@ -1,18 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
-import { Button } from "@/shared/components/ui/Button";
-import { Input } from "@/shared/components/ui/Input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@/shared/components/ui/Card";
-import { Heading1, Text, Label } from "@/shared/components/ui/Typography";
+import { BrutalButton } from "@/shared/components/brutal/BrutalButton";
+import { BrutalInput } from "@/shared/components/brutal/BrutalInput";
+import { BrutalCard } from "@/shared/components/brutal/BrutalCard";
 import { routesConfig } from "@/config/app.config";
-import { toast } from "sonner";
+import { brutalToast } from "@/shared/utils/brutalToast";
 import { motion } from "framer-motion";
 import { LogIn, Mail, Lock } from "lucide-react";
 
@@ -25,7 +18,7 @@ export function Login() {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error("Please fill in all fields");
+      brutalToast.error("Por favor completa todos los campos");
       return;
     }
 
@@ -33,96 +26,92 @@ export function Login() {
   };
 
   return (
-    <motion.div
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
+        className="max-w-md w-full"
       >
-        <Card className="shadow-xl">
-          <CardHeader className="space-y-2 text-center">
+        <BrutalCard className="bg-white border-4 border-black shadow-brutal-lg p-8">
+          <div className="text-center mb-8">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4"
+              className="mx-auto w-16 h-16 bg-neon-green border-4 border-black flex items-center justify-center mb-4 shadow-brutal"
             >
-              <LogIn className="h-6 w-6 text-primary" />
+              <LogIn className="h-8 w-8 text-black" />
             </motion.div>
-            <Heading1 className="text-2xl">Welcome Back</Heading1>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
+            <h1 className="font-heading text-4xl uppercase mb-2">Bienvenido</h1>
+            <p className="font-mono text-gray-600">
+              Ingresa tus credenciales para acceder
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <BrutalInput
+                label="Correo Electrónico"
+                icon={<Mail className="w-5 h-5" />}
+                type="email"
+                placeholder="tu@ejemplo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <BrutalInput
+                label="Contraseña"
+                icon={<Lock className="w-5 h-5" />}
+                type="password"
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <BrutalButton 
+                type="submit" 
+                fullWidth 
+                size="lg" 
+                disabled={isLoading}
+                className="bg-black text-white hover:bg-neon-pink hover:text-white hover:border-black"
               >
-                <div className="space-y-2">
-                  <Label htmlFor="email" required>Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-                      id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="password" required>Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-                      id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-                      className="pl-10"
-            />
-                  </div>
-                </div>
-              </motion.div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="w-full"
-              >
-                <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
-            </Button>
-              </motion.div>
-              <Text size="sm" muted className="text-center">
-              Don't have an account?{" "}
+                {isLoading ? "Iniciando..." : "Iniciar Sesión"}
+              </BrutalButton>
+            </motion.div>
+
+            <div className="text-center font-mono text-sm">
+              <span className="text-gray-600">¿No tienes una cuenta? </span>
               <Link
                 to={routesConfig.auth.register}
-                  className="text-primary hover:underline font-medium"
+                className="font-bold text-black hover:text-neon-blue hover:underline decoration-2 underline-offset-2"
               >
-                Sign up
+                Regístrate
               </Link>
-              </Text>
-          </CardFooter>
-        </form>
-      </Card>
+            </div>
+          </form>
+        </BrutalCard>
       </motion.div>
+    </div>
   );
 }

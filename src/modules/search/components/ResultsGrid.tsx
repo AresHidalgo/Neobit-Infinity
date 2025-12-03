@@ -2,13 +2,12 @@
 import { Link } from 'react-router-dom';
 import { Product } from '@/types/product.type';
 import { routesConfig } from '@/config/app.config';
-import { Card, CardHeader, CardTitle } from '@/shared/components/ui/Card';
-import { Badge } from '@/shared/components/ui/Badge';
+import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
+import { BrutalBadge } from '@/shared/components/brutal/BrutalBadge';
 import { AspectRatio } from '@/shared/components/ui/AspectRatio';
-import { Text } from '@/shared/components/ui/Typography';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Star, ShoppingCart, Eye } from 'lucide-react';
 
 interface ResultsGridProps {
   products: Product[];
@@ -24,28 +23,11 @@ export function ResultsGrid({ products, isLoading, viewMode = 'grid' }: ResultsG
         : 'space-y-4'
       }>
         {Array.from({ length: 8 }).map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            {viewMode === 'grid' ? (
-              <>
-                <AspectRatio ratio={1}>
-                  <Skeleton className="w-full h-full" />
-                </AspectRatio>
-            <CardHeader>
-                  <Skeleton className="h-4 w-3/4 mb-2" />
-                  <Skeleton className="h-6 w-1/2" />
-            </CardHeader>
-              </>
-            ) : (
-              <div className="flex gap-4 p-4">
-                <Skeleton className="w-24 h-24 flex-shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-6 w-1/4" />
-                </div>
-              </div>
-            )}
-          </Card>
+          <BrutalCard key={i} className="animate-pulse h-[400px]">
+            <Skeleton className="w-full h-48 mb-4" />
+            <Skeleton className="h-6 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </BrutalCard>
         ))}
       </div>
     );
@@ -58,61 +40,98 @@ export function ResultsGrid({ products, isLoading, viewMode = 'grid' }: ResultsG
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Text size="lg" muted className="mb-2">No products found</Text>
-        <Text size="sm" muted>Try adjusting your search or filters</Text>
+        <p className="font-heading text-2xl mb-2 uppercase">No se encontraron productos</p>
+        <p className="font-mono text-gray-500">Intenta ajustar tu búsqueda o filtros</p>
       </motion.div>
     );
   }
 
   if (viewMode === 'list') {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         {products.map((product, index) => (
           <motion.div
             key={product.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
           >
             <Link to={routesConfig.products.detail(product.id)}>
-              <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                <div className="flex gap-4 p-4">
-                  <AspectRatio ratio={1} className="w-24 h-24 flex-shrink-0">
+              <BrutalCard className="hover:shadow-brutal-lg transition-all duration-300 cursor-pointer group flex flex-col md:flex-row gap-6 p-6">
+                {/* Image Section */}
+                <div className="w-full md:w-64 flex-shrink-0">
+                  <AspectRatio ratio={1}>
                     <img
                       src={product.images?.[0] || 'https://via.placeholder.com/400'}
                       alt={product.name}
-                      className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover border-2 border-black"
                       loading="lazy"
                     />
                   </AspectRatio>
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                      {product.name}
-                    </CardTitle>
-                    <div className="flex items-center gap-4 mb-2">
-                      <span className="text-xl font-bold">${product.price.toFixed(2)}</span>
+                </div>
+
+                {/* Content Section */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-heading text-2xl uppercase group-hover:text-neon-blue transition-colors">
+                        {product.name}
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 bg-black text-white px-2 py-0.5 font-mono text-sm font-bold">
+                          <Star className="h-3 w-3 fill-white" />
+                          {product.rating.toFixed(1)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="font-heading text-3xl text-neon-green">
+                        ${product.price.toFixed(2)}
+                      </span>
                       {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="text-sm text-muted-foreground line-through">
+                        <span className="font-mono text-lg text-gray-400 line-through decoration-2 decoration-red-500">
                           ${product.originalPrice.toFixed(2)}
                         </span>
                       )}
                       {product.discountPercent && (
-                        <Badge variant="destructive">-{product.discountPercent}%</Badge>
+                        <BrutalBadge variant="neon" size="sm">-{product.discountPercent}%</BrutalBadge>
                       )}
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <Text size="sm" weight="medium">{product.rating.toFixed(1)}</Text>
+
+                    <p className="font-mono text-gray-600 mb-4 line-clamp-2 border-l-2 border-neon-yellow pl-3">
+                      {product.description}
+                    </p>
+
+                    {/* Specs Preview (Mocked if not present) */}
+                    <div className="grid grid-cols-2 gap-2 mb-4 font-mono text-xs text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 bg-black"></span>
+                        <span>Envío Rápido Disponible</span>
                       </div>
-                      <Text size="sm" muted>({product.reviewCount} reviews)</Text>
-                      {product.stock > 0 && product.stock < 10 && (
-                        <Text size="sm" className="text-orange-500">Only {product.stock} left!</Text>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 bg-black"></span>
+                        <span>Garantía de 1 Año</span>
+                      </div>
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-4 mt-auto pt-4 border-t-2 border-gray-100">
+                    <button className="flex items-center gap-2 font-heading uppercase text-sm hover:text-neon-pink transition-colors">
+                      <Eye className="w-4 h-4" /> Ver Detalles
+                    </button>
+                    {product.stock > 0 ? (
+                      <span className="font-mono text-xs text-green-600 font-bold uppercase ml-auto">
+                        {product.stock} Disponibles
+                      </span>
+                    ) : (
+                      <span className="font-mono text-xs text-red-600 font-bold uppercase ml-auto">
+                        Agotado
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </Card>
+              </BrutalCard>
             </Link>
           </motion.div>
         ))}
@@ -131,52 +150,55 @@ export function ResultsGrid({ products, isLoading, viewMode = 'grid' }: ResultsG
           whileHover={{ y: -4 }}
         >
           <Link to={routesConfig.products.detail(product.id)}>
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer h-full group overflow-hidden">
-              <div className="relative overflow-hidden">
+            <BrutalCard className="hover:shadow-brutal-lg transition-all duration-300 cursor-pointer h-full group p-0 overflow-hidden bg-white">
+              <div className="relative border-b-4 border-black">
                 <AspectRatio ratio={1}>
-              <img
-                src={product.images?.[0] || 'https://via.placeholder.com/400'}
-                alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  <img
+                    src={product.images?.[0] || 'https://via.placeholder.com/400'}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
-              />
+                  />
                 </AspectRatio>
-              {product.discountPercent && (
-                <Badge className="absolute top-2 right-2 bg-destructive">
-                  -{product.discountPercent}%
-                </Badge>
-              )}
-              {product.stock === 0 && (
-                <Badge variant="destructive" className="absolute top-2 left-2">
-                  Out of Stock
-                </Badge>
-              )}
-            </div>
-            <CardHeader className="p-4">
-                <CardTitle className="text-base group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                {product.discountPercent && (
+                  <div className="absolute top-2 right-2">
+                    <BrutalBadge variant="neon" size="sm">-{product.discountPercent}%</BrutalBadge>
+                  </div>
+                )}
+                {product.stock === 0 && (
+                  <div className="absolute top-2 left-2">
+                    <BrutalBadge variant="outline" className="bg-red-500 text-white border-black">Agotado</BrutalBadge>
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-4 flex flex-col h-[180px]">
+                <h3 className="font-heading text-lg uppercase leading-tight mb-2 line-clamp-2 group-hover:text-neon-blue transition-colors">
                   {product.name}
-                </CardTitle>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xl font-bold">${product.price.toFixed(2)}</span>
-                  {product.originalPrice && product.originalPrice > product.price && (
-                      <span className="text-sm text-muted-foreground line-through">
-                      ${product.originalPrice.toFixed(2)}
-                    </span>
-                  )}
+                </h3>
+                
+                <div className="mt-auto">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="font-heading text-2xl">${product.price.toFixed(2)}</span>
+                    {product.originalPrice && product.originalPrice > product.price && (
+                      <span className="font-mono text-xs text-gray-400 line-through decoration-2 decoration-red-500">
+                        ${product.originalPrice.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center justify-between border-t-2 border-gray-100 pt-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-black" />
+                      <span className="font-mono text-sm font-bold">{product.rating.toFixed(1)}</span>
+                      <span className="font-mono text-xs text-gray-400">({product.reviewCount})</span>
+                    </div>
+                    <ShoppingCart className="w-5 h-5 hover:text-neon-green transition-colors" />
+                  </div>
                 </div>
               </div>
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <Text size="sm" weight="medium">{product.rating.toFixed(1)}</Text>
-                  <Text size="sm" muted>({product.reviewCount})</Text>
-              </div>
-              {product.stock > 0 && product.stock < 10 && (
-                  <Text size="xs" className="text-orange-500 mt-1">Only {product.stock} left!</Text>
-              )}
-            </CardHeader>
-          </Card>
-        </Link>
+            </BrutalCard>
+          </Link>
         </motion.div>
       ))}
     </div>

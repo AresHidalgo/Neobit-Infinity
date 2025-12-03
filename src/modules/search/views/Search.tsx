@@ -67,8 +67,8 @@ export function Search() {
         >
         <Breadcrumbs
           items={[
-            { label: 'Home', to: routesConfig.home },
-            { label: 'Search' },
+            { label: 'Inicio', to: routesConfig.home },
+            { label: 'Búsqueda' },
           ]}
           className="mb-6"
         />
@@ -105,7 +105,7 @@ export function Search() {
                 className="flex-1"
             >
               <SlidersHorizontal className="h-4 w-4 mr-2" />
-              Filters
+              Filtros
             </Button>
               <div className="flex border rounded-md">
                 <Button
@@ -132,16 +132,16 @@ export function Search() {
               <div className="flex items-center gap-4">
                 {!isLoading && pagination && (
                   <Text size="sm" muted>
-                    {pagination.total} {pagination.total === 1 ? 'product' : 'products'} found
+                    {pagination.total} {pagination.total === 1 ? 'producto' : 'productos'} encontrados
                   </Text>
                 )}
               </div>
-              <div className="flex border rounded-md">
+              <div className="flex border-2 border-black">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-r-none"
+                  className={`rounded-none border-r-2 border-black ${viewMode === 'grid' ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
                 >
                   <Grid className="h-4 w-4" />
                 </Button>
@@ -149,7 +149,7 @@ export function Search() {
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="icon"
                   onClick={() => setViewMode('list')}
-                  className="rounded-l-none"
+                  className={`rounded-none ${viewMode === 'list' ? 'bg-black text-white' : 'hover:bg-gray-100'}`}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -178,7 +178,7 @@ export function Search() {
                 animate={{ opacity: 1 }}
               >
               <div className="flex flex-wrap gap-2 items-center">
-                  <Text size="sm" weight="medium">Active Filters:</Text>
+                  <Text size="sm" weight="medium">Filtros Activos:</Text>
                 {activeFilters.map((filter) => (
                   <FilterChip key={filter.key} label={filter.label} onRemove={filter.onRemove} />
                 ))}

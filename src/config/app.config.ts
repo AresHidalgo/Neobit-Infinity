@@ -71,3 +71,14 @@ export const routesConfig = {
   },
 };
 
+export const logoConfig = {
+  image: {
+    src: '/assets/logos/logotype.svg',
+    alt: 'Neobit Infinity Logo',
+  },
+  text: {
+    primary: 'Neobit',
+    secondary: 'Infinity',
+  },
+};
+

@@ -5,7 +5,6 @@ import { useAuth } from '@/core/hooks/useAuth';
 import { routesConfig } from '@/config/app.config';
 import { Button } from '@/shared/components/ui/Button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/Avatar';
-import { Badge } from '@/shared/components/ui/Badge';
 import { useCartStore } from '@/store/cart.store';
 import { useLogout } from '@/modules/auth/hooks/useLogout';
 import { ThemeSelector } from './ThemeSelector';
@@ -26,36 +25,36 @@ export function Header() {
     : 'U';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-[4px] border-foreground/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative shadow-[0_4px_0px_hsl(var(--foreground)/0.08)]">
-      <div className="container mx-auto flex h-20 items-center justify-between px-6">
-        <div className="flex items-center space-x-6">
-          <Logo />
+    <header className="sticky top-0 z-50 w-full border-b-4 border-black bg-white relative">
+      <div className="container mx-auto flex h-24 items-center justify-between px-6">
+        <div className="flex items-center space-x-8">
+          <Logo className="scale-125" />
           <NavigationMenu />
           {isAuthenticated && (
-            <nav className="hidden lg:flex items-center space-x-4 ml-4 pl-4 border-l-[3px] border-foreground/20">
+            <nav className="hidden lg:flex items-center space-x-6 ml-6 pl-6 border-l-4 border-black h-12">
               <Link 
                 to={routesConfig.wishlist} 
-                className="text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary hover:neon-text transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[3px] after:bg-primary after:transition-all after:duration-200 hover:after:w-full hover:after:neon-glow"
+                className="text-base font-heading uppercase tracking-wider text-black hover:text-neon-pink hover:underline decoration-4 underline-offset-4 transition-all"
               >
-                Wishlist
+                Deseos
               </Link>
               <Link 
                 to={routesConfig.orders.list} 
-                className="text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary hover:neon-text transition-all duration-200 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[3px] after:bg-primary after:transition-all after:duration-200 hover:after:w-full hover:after:neon-glow"
+                className="text-base font-heading uppercase tracking-wider text-black hover:text-neon-blue hover:underline decoration-4 underline-offset-4 transition-all"
               >
-                Orders
+                Pedidos
               </Link>
             </nav>
           )}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           <Link 
             to={routesConfig.products.search} 
-            className="p-2 hover:bg-accent rounded-md transition-colors"
-            aria-label="Search products"
+            className="p-3 border-3 border-transparent hover:border-black hover:bg-neon-yellow transition-all"
+            aria-label="Buscar productos"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-6 w-6 stroke-[3]" />
           </Link>
 
           <ThemeSelector />
@@ -64,36 +63,40 @@ export function Header() {
             <>
               <Link 
                 to={routesConfig.cart} 
-                className="relative p-2 hover:bg-accent rounded-md transition-colors"
-                aria-label="Shopping cart"
+                className="relative p-3 border-3 border-transparent hover:border-black hover:bg-neon-green transition-all group"
+                aria-label="Carrito de compras"
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-6 w-6 stroke-[3]" />
                 {itemCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary text-primary-foreground">
+                  <span className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center font-mono font-bold text-xs bg-black text-white border-2 border-white">
                     {itemCount}
-                  </Badge>
+                  </span>
                 )}
               </Link>
-              <div className="hidden md:flex items-center space-x-2">
-                <Link to={routesConfig.profile} className="hover:opacity-80 transition-opacity">
-                  <Avatar>
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to={routesConfig.profile} className="hover:opacity-80 transition-opacity border-3 border-black p-0.5">
+                  <Avatar className="h-10 w-10 rounded-none">
                     <AvatarImage src={user?.avatarUrl} alt={user?.firstName} />
-                    <AvatarFallback>{initials}</AvatarFallback>
+                    <AvatarFallback className="rounded-none font-bold bg-neon-pink text-white">{initials}</AvatarFallback>
                   </Avatar>
                 </Link>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
-                  Logout
+                <Button variant="ghost" className="font-mono font-bold uppercase border-3 border-transparent hover:border-black" onClick={handleLogout}>
+                  Salir
                 </Button>
               </div>
             </>
           ) : (
-            <div className="hidden md:flex items-center space-x-2">
-              <Button variant="ghost" onClick={() => navigate(routesConfig.auth.login)}>
-                Login
-              </Button>
-              <Button onClick={() => navigate(routesConfig.auth.register)}>
-                Sign Up
-              </Button>
+            <div className="hidden md:flex items-center space-x-4">
+              <Link to={routesConfig.auth.login}>
+                <Button variant="ghost" className="font-mono font-bold uppercase border-3 border-transparent hover:border-black hover:bg-gray-100">
+                  Entrar
+                </Button>
+              </Link>
+              <Link to={routesConfig.auth.register}>
+                <Button className="font-heading uppercase bg-black text-white border-3 border-black hover:bg-neon-green hover:text-black hover:shadow-brutal transition-all">
+                  Registro
+                </Button>
+              </Link>
             </div>
           )}
 
@@ -101,11 +104,11 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden border-3 border-black rounded-none hover:bg-neon-yellow"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="h-6 w-6 stroke-[3]" /> : <Menu className="h-6 w-6 stroke-[3]" />}
           </Button>
         </div>
       </div>
@@ -117,42 +120,35 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t bg-background/95 backdrop-blur"
+            className="md:hidden border-t-4 border-black bg-white"
           >
-            <nav className="container mx-auto px-4 py-4 space-y-3">
+            <nav className="container mx-auto px-6 py-6 space-y-4">
               {/* Main Navigation Items */}
-              <div className="space-y-2 pb-4 border-b-[4px] border-foreground/20">
+              <div className="space-y-3 pb-6 border-b-4 border-black">
                 <Link
                   to={routesConfig.products.categories}
-                  className="block py-2 text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary transition-colors"
+                  className="block py-2 text-xl font-heading uppercase text-black hover:text-neon-pink hover:translate-x-2 transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Productos - Categorías
+                  Productos
                 </Link>
                 <Link
                   to={routesConfig.about.index}
-                  className="block py-2 text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary transition-colors"
+                  className="block py-2 text-xl font-heading uppercase text-black hover:text-neon-blue hover:translate-x-2 transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sobre Nosotros
+                  Nosotros
                 </Link>
                 <Link
                   to={routesConfig.services.index}
-                  className="block py-2 text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary transition-colors"
+                  className="block py-2 text-xl font-heading uppercase text-black hover:text-neon-green hover:translate-x-2 transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Servicios
                 </Link>
                 <Link
-                  to={routesConfig.policies.index}
-                  className="block py-2 text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Políticas
-                </Link>
-                <Link
                   to={routesConfig.contact.index}
-                  className="block py-2 text-sm font-bold uppercase tracking-wide text-foreground/80 hover:text-primary transition-colors"
+                  className="block py-2 text-xl font-heading uppercase text-black hover:text-neon-yellow hover:translate-x-2 transition-all"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Contacto
@@ -161,64 +157,64 @@ export function Header() {
               
               {/* User-specific Links */}
               {isAuthenticated && (
-                <>
+                <div className="space-y-3">
                   <Link
                     to={routesConfig.wishlist}
-                    className="block py-2 text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                    className="block py-2 text-lg font-mono font-bold uppercase text-black hover:underline"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Wishlist
+                    Lista de Deseos
                   </Link>
                   <Link
                     to={routesConfig.orders.list}
-                    className="block py-2 text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                    className="block py-2 text-lg font-mono font-bold uppercase text-black hover:underline"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Orders
+                    Mis Pedidos
                   </Link>
                   <Link
                     to={routesConfig.profile}
-                    className="flex items-center gap-2 py-2 text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+                    className="flex items-center gap-3 py-2 text-lg font-mono font-bold uppercase text-black hover:underline"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Avatar className="h-6 w-6">
+                    <Avatar className="h-8 w-8 rounded-none border-2 border-black">
                       <AvatarImage src={user?.avatarUrl} alt={user?.firstName} />
-                      <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                      <AvatarFallback className="rounded-none bg-neon-pink text-white">{initials}</AvatarFallback>
                     </Avatar>
-                    Profile
+                    Perfil
                   </Link>
                   <Button 
                     variant="ghost" 
-                    className="w-full justify-start" 
+                    className="w-full justify-start font-mono font-bold uppercase text-red-600 hover:bg-red-50" 
                     onClick={() => {
                       handleLogout();
                       setMobileMenuOpen(false);
                     }}
                   >
-                    Logout
+                    Cerrar Sesión
                   </Button>
-                </>
+                </div>
               )}
               {!isAuthenticated && (
-                <div className="pt-2 space-y-2">
+                <div className="pt-4 space-y-4">
                   <Button 
                     variant="ghost" 
-                    className="w-full" 
+                    className="w-full font-mono font-bold uppercase border-3 border-black hover:bg-gray-100" 
                     onClick={() => {
                       navigate(routesConfig.auth.login);
                       setMobileMenuOpen(false);
                     }}
                   >
-                    Login
+                    Iniciar Sesión
                   </Button>
                   <Button 
-                    className="w-full" 
+                    className="w-full font-heading uppercase bg-neon-green text-black border-3 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all" 
                     onClick={() => {
                       navigate(routesConfig.auth.register);
                       setMobileMenuOpen(false);
                     }}
                   >
-                    Sign Up
+                    Registrarse
                   </Button>
                 </div>
               )}

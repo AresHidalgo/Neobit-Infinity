@@ -11,7 +11,6 @@ import {
   DropdownMenuLabel,
 } from '@/shared/components/ui/DropdownMenu';
 import { Moon, Sun, Monitor, Check } from 'lucide-react';
-import { ThemeColorPicker } from './ThemeColorPicker';
 
 export function ThemeSelector() {
   const { theme, setTheme, availableThemes, resolvedThemeId, themeBase } = useTheme();
@@ -98,7 +97,6 @@ export function ThemeSelector() {
           })}
         </DropdownMenuContent>
       </DropdownMenu>
-      <ThemeColorPicker />
     </div>
   );
 }

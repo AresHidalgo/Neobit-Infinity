@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { ThemeId, getTheme, themes, Theme, ThemeBase, ColorAccent, getThemeBase, applyColorAccent, colorAccents } from '@/config/theme.config';
+import { ThemeId, getTheme, themes, Theme, ThemeBase, getThemeBase } from '@/config/theme.config';
 
 type SystemTheme = 'system';
 
@@ -12,9 +12,6 @@ interface ThemeContextType {
   resolvedThemeId: ThemeId;
   availableThemes: Theme[];
   themeBase: ThemeBase;
-  colorAccent: ColorAccent;
-  setColorAccent: (accent: ColorAccent) => void;
-  availableAccents: ColorAccent[];
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -40,16 +37,6 @@ export function ThemeProvider({
     return defaultThemeProp;
   });
 
-  const [colorAccent, setColorAccentState] = useState<ColorAccent>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(`${storageKey}-accent`) as ColorAccent;
-      if (stored && colorAccents[stored]) {
-        return stored;
-      }
-    }
-    return 'default';
-  });
-
   const getResolvedThemeId = (pref: ThemePreference): ThemeId => {
     if (pref === 'system') {
       if (typeof window !== 'undefined') {
@@ -65,18 +52,13 @@ export function ThemeProvider({
   );
 
   const themeBase: ThemeBase = getThemeBase(resolvedThemeId);
-  
-  // Aplicar color accent al tema base
-  const baseTheme = getTheme(resolvedThemeId);
-  const currentTheme = applyColorAccent(baseTheme, colorAccent);
-  
-  const availableAccents: ColorAccent[] = Object.keys(colorAccents) as ColorAccent[];
+  const currentTheme = getTheme(resolvedThemeId);
 
   useEffect(() => {
     const root = window.document.documentElement;
     
     // Remove all theme classes
-    root.classList.remove('light', 'dark', 'ocean', 'forest', 'sunset', 'cyan', 'magenta', 'purple', 'green', 'orange');
+    root.classList.remove('light', 'dark');
 
     let effectiveThemeId: ThemeId;
 
@@ -88,11 +70,11 @@ export function ThemeProvider({
       const handleChange = (e: MediaQueryListEvent) => {
         effectiveThemeId = e.matches ? 'dark' : 'light';
         setResolvedThemeId(effectiveThemeId);
-        applyThemeToDOM(effectiveThemeId, colorAccent);
+        applyThemeToDOM(effectiveThemeId);
       };
       
       mediaQuery.addEventListener('change', handleChange);
-      applyThemeToDOM(effectiveThemeId, colorAccent);
+      applyThemeToDOM(effectiveThemeId);
       
       return () => mediaQuery.removeEventListener('change', handleChange);
     } else {
@@ -100,29 +82,28 @@ export function ThemeProvider({
     }
 
     setResolvedThemeId(effectiveThemeId);
-    applyThemeToDOM(effectiveThemeId, colorAccent);
-  }, [theme, colorAccent]);
+    applyThemeToDOM(effectiveThemeId);
+  }, [theme]);
 
-  const applyThemeToDOM = (themeId: ThemeId, accent: ColorAccent = 'default') => {
+  const applyThemeToDOM = (themeId: ThemeId) => {
     const root = window.document.documentElement;
-    const baseTheme = getTheme(themeId);
-    const finalTheme = applyColorAccent(baseTheme, accent);
+    const theme = getTheme(themeId);
     
     // Apply theme class
     root.classList.add(themeId);
     
-    // Apply CSS variables with accent color
-    Object.entries(finalTheme.colors).forEach(([key, value]) => {
+    // Apply CSS variables
+    Object.entries(theme.colors).forEach(([key, value]) => {
       root.style.setProperty(`--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`, value);
     });
     
     // Apply typography
-    root.style.setProperty('--font-sans', finalTheme.typography.fontFamily.sans);
-    root.style.setProperty('--font-serif', finalTheme.typography.fontFamily.serif);
-    root.style.setProperty('--font-mono', finalTheme.typography.fontFamily.mono);
+    root.style.setProperty('--font-sans', theme.typography.fontFamily.sans);
+    root.style.setProperty('--font-serif', theme.typography.fontFamily.serif);
+    root.style.setProperty('--font-mono', theme.typography.fontFamily.mono);
     
     // Apply spacing
-    root.style.setProperty('--radius', finalTheme.borderRadius);
+    root.style.setProperty('--radius', theme.borderRadius);
   };
 
   const value: ThemeContextType = {
@@ -135,12 +116,6 @@ export function ThemeProvider({
     resolvedThemeId,
     availableThemes: Object.values(themes),
     themeBase,
-    colorAccent,
-    setColorAccent: (accent) => {
-      localStorage.setItem(`${storageKey}-accent`, accent);
-      setColorAccentState(accent);
-    },
-    availableAccents,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -1,26 +1,24 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '@/core/providers/ThemeProvider';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/core/providers/ThemeProvider";
 
 export function ThemeTransition() {
-  const { resolvedThemeId, colorAccent } = useTheme();
+  const { resolvedThemeId } = useTheme();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [prevTheme, setPrevTheme] = useState(resolvedThemeId);
-  const [prevAccent, setPrevAccent] = useState(colorAccent);
 
   useEffect(() => {
-    if (resolvedThemeId !== prevTheme || colorAccent !== prevAccent) {
+    if (resolvedThemeId !== prevTheme) {
       setIsTransitioning(true);
-      
+
       const timer = setTimeout(() => {
         setIsTransitioning(false);
         setPrevTheme(resolvedThemeId);
-        setPrevAccent(colorAccent);
       }, 400); // Duración de la transición (300-500ms como especificado)
 
       return () => clearTimeout(timer);
     }
-  }, [resolvedThemeId, colorAccent, prevTheme, prevAccent]);
+  }, [resolvedThemeId, prevTheme]);
 
   return (
     <AnimatePresence>
@@ -43,7 +41,7 @@ export function ThemeTransition() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           />
-          
+
           {/* Efecto de fade/crossfade */}
           <motion.div
             className="absolute inset-0"
@@ -57,11 +55,10 @@ export function ThemeTransition() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.4, ease: 'easeInOut' }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
           />
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
-

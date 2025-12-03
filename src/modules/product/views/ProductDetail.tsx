@@ -1,298 +1,235 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useProduct } from '@/core/query/queries/products.queries';
-import { ProductGallery } from '../components/ProductGallery';
-import { VariantsSelector } from '../components/VariantsSelector';
-import { AddToCart } from '../components/AddToCart';
-import { ReviewList } from '../components/ReviewList';
-import { PriceHistoryChart } from '../components/PriceHistoryChart';
-import { Product3DViewer } from '../components/Product3DViewer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/Tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card';
-import { Badge } from '@/shared/components/ui/Badge';
-import { Separator } from '@/shared/components/ui/Separator';
+import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
+import { BrutalButton } from '@/shared/components/brutal/BrutalButton';
+import { BrutalBadge } from '@/shared/components/brutal/BrutalBadge';
+import { BrutalInput } from '@/shared/components/brutal/BrutalInput';
 import { LoadingSpinner } from '@/shared/components/ui/LoadingSpinner';
-import { Container } from '@/shared/components/ui/Container';
-import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
-import { Heading1, Text } from '@/shared/components/ui/Typography';
-import { RandomGamingIcons } from '@/shared/components/ui/GamingDecoratives';
-import { Star, Package, Truck, Shield, CheckCircle2 } from 'lucide-react';
-import { routesConfig } from '@/config/app.config';
-import { motion } from 'framer-motion';
-import { cn } from '@/shared/utils/cn';
+import { Star, Truck, Shield, RotateCcw, ShoppingCart, Heart, Share2, MessageSquare, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function ProductDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { data, isLoading, error } = useProduct(id || '');
-  const [selectedVariant, setSelectedVariant] = useState<Record<string, string>>({});
-  const [isSticky, setIsSticky] = useState(false);
+  const [activeTab, setActiveTab] = useState('description');
+  const [selectedImage, setSelectedImage] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 400);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <Container className="py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner />
-        </div>
-      </Container>
-    );
-  }
-
-  if (error || !data?.success || !data.data) {
-    return (
-      <Container className="py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Text size="lg" muted className="mb-4">Product not found</Text>
-              <Link 
-                to={routesConfig.products.search} 
-                className="text-primary hover:underline inline-block"
-              >
-                Browse all products
-              </Link>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </Container>
-    );
-  }
+  if (isLoading) return <div className="flex justify-center py-20"><LoadingSpinner /></div>;
+  if (error || !data?.success || !data.data) return <div className="text-center py-20 font-mono">Producto no encontrado. Error del Sistema.</div>;
 
   const product = data.data;
 
+  const tabs = [
+    { id: 'description', label: 'Especificaciones' },
+    { id: 'reviews', label: `Reseñas (${product.reviewCount})` },
+    { id: 'comments', label: 'Comentarios' },
+    { id: 'shipping', label: 'Envío' },
+  ];
+
+  // Mock Comments Data
+  const comments = [
+    { id: 1, user: 'CyberPunk_99', text: '¡Este producto es increíble! La calidad es superior.', date: 'Hace 2 días' },
+    { id: 2, user: 'NeonRider', text: 'Me encanta el diseño, combina perfecto con mi setup.', date: 'Hace 1 semana' },
+    { id: 3, user: 'GlitchMaster', text: 'El envío fue súper rápido. Recomendado.', date: 'Hace 2 semanas' },
+  ];
+
   return (
-    <div className="relative">
-      {/* Gaming Icons Decorativos de Fondo */}
-      <RandomGamingIcons 
-        density="low" 
-        minSize={40} 
-        maxSize={80}
-        className="opacity-10"
-      />
-      
-      <Container className="py-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-        <Breadcrumbs
-          items={[
-            { label: 'Home', to: routesConfig.home },
-            { label: 'Products', to: routesConfig.products.search },
-            { label: product.name },
-          ]}
-          className="mb-6"
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Left: Images */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <ProductGallery images={product.images || []} productName={product.name} />
-          </motion.div>
-
-          {/* Right: Product Info */}
-          <motion.div
-            className="space-y-6 relative"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <div>
-              <Heading1 className="mb-3">{product.name}</Heading1>
-              <div className="flex items-center gap-4 mb-4 flex-wrap">
-                <div className="flex items-center gap-1">
-                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <Text size="base" weight="semibold">{product.rating.toFixed(1)}</Text>
-                  <Text size="sm" muted>({product.reviewCount} reviews)</Text>
-                </div>
-                {product.tags && product.tags.length > 0 && (
-                  <div className="flex gap-1 flex-wrap">
-                    {product.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Price */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="flex items-center gap-3 mb-2 flex-wrap">
-                <span className="text-4xl font-bold">${product.price.toFixed(2)}</span>
-                {product.originalPrice && product.originalPrice > product.price && (
-                  <>
-                    <span className="text-2xl text-muted-foreground line-through">
-                      ${product.originalPrice.toFixed(2)}
-                    </span>
-                    <Badge className="bg-destructive text-destructive-foreground">
-                      -{product.discountPercent}% OFF
-                    </Badge>
-                  </>
-                )}
-              </div>
-              {product.originalPrice && product.originalPrice > product.price && (
-                <Text size="sm" muted>
-                  You save ${(product.originalPrice - product.price).toFixed(2)}
-                </Text>
-              )}
-            </motion.div>
-
-            <Separator />
-
-            {/* Variants */}
-            {product.variants && Object.keys(product.variants).length > 0 && (
-              <VariantsSelector
-                variants={product.variants}
-                onVariantChange={setSelectedVariant}
+    <div className="container mx-auto px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        
+        {/* Left Column: Gallery */}
+        <div className="lg:col-span-7 space-y-6">
+          <BrutalCard className="p-0 overflow-hidden border-4 border-black bg-white relative">
+            <div className="aspect-square relative">
+              <img 
+                src={product.images?.[selectedImage] || 'https://via.placeholder.com/600'} 
+                alt={product.name}
+                className="w-full h-full object-cover"
               />
-            )}
-
-            {/* Stock Status */}
-            <div>
-              {product.stock > 0 ? (
-                <Badge variant="outline" className="text-green-600 dark:text-green-400 border-green-600 dark:border-green-400">
-                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                  In Stock ({product.stock} available)
-                </Badge>
-              ) : (
-                <Badge variant="destructive">Out of Stock</Badge>
+              {product.discountPercent && (
+                <div className="absolute top-4 left-4">
+                  <BrutalBadge variant="neon" size="md" className="text-xl px-4 py-2">
+                    -{product.discountPercent}% OFF
+                  </BrutalBadge>
+                </div>
               )}
             </div>
-
-            {/* Add to Cart - Sticky on scroll */}
-            <motion.div
-              className={cn(
-                "transition-all duration-300",
-                isSticky && "lg:fixed lg:bottom-0 lg:left-0 lg:right-0 lg:z-50 lg:bg-background/95 lg:backdrop-blur lg:border-t lg:shadow-lg lg:p-4"
-              )}
-              initial={false}
-              animate={{ 
-                y: isSticky ? 0 : 0,
-              }}
-            >
-              <div className={cn(isSticky && "container mx-auto max-w-7xl px-4")}>
-                <AddToCart product={product} selectedVariant={selectedVariant} />
-              </div>
-            </motion.div>
-
-            {/* Features */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-              <div className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-muted-foreground" />
-                <Text size="sm">Free Shipping</Text>
-              </div>
-              <div className="flex items-center gap-2">
-                <Truck className="h-5 w-5 text-muted-foreground" />
-                <Text size="sm">Fast Delivery</Text>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                <Text size="sm">1 Year Warranty</Text>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-muted-foreground" />
-                <Text size="sm">Verified Reviews</Text>
-              </div>
-            </div>
-          </motion.div>
+          </BrutalCard>
+          
+          <div className="grid grid-cols-4 gap-4">
+            {product.images?.map((img, idx) => (
+              <button 
+                key={idx}
+                onClick={() => setSelectedImage(idx)}
+                className={`aspect-square border-3 transition-all ${
+                  selectedImage === idx 
+                    ? 'border-neon-pink shadow-[4px_4px_0px_0px_#FF0099]' 
+                    : 'border-black hover:border-neon-blue'
+                }`}
+              >
+                <img src={img} alt={`Ver ${idx}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Product Details Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Tabs defaultValue="description" className="mb-12">
-            <TabsList className="grid w-full grid-cols-4 h-auto p-1">
-              <TabsTrigger value="description" className="py-2">Description</TabsTrigger>
-              <TabsTrigger value="specifications" className="py-2">Specifications</TabsTrigger>
-              <TabsTrigger value="reviews" className="py-2">Reviews</TabsTrigger>
-              <TabsTrigger value="price-history" className="py-2">Price History</TabsTrigger>
-            </TabsList>
+        {/* Right Column: Info & Actions */}
+        <div className="lg:col-span-5 space-y-8">
+          <div>
+            <div className="flex justify-between items-start mb-4">
+              <h1 className="font-heading text-4xl lg:text-5xl uppercase leading-none">
+                {product.name}
+              </h1>
+              <button className="p-3 border-2 border-black hover:bg-neon-pink hover:text-white transition-colors">
+                <Heart className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-1 bg-black text-white px-3 py-1 font-mono font-bold">
+                <Star className="w-4 h-4 fill-white" />
+                {product.rating.toFixed(1)}
+              </div>
+              <span className="font-mono text-gray-500 underline decoration-2 decoration-neon-green">
+                {product.reviewCount} Reseñas Verificadas
+              </span>
+            </div>
 
-            <TabsContent value="description" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Description</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Text className="whitespace-pre-line">{product.description}</Text>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            <div className="flex items-baseline gap-4 mb-8">
+              <span className="font-heading text-6xl text-neon-blue">
+                ${product.price.toFixed(2)}
+              </span>
+              {product.originalPrice && product.originalPrice > product.price && (
+                <span className="font-mono text-xl text-gray-400 line-through decoration-4 decoration-red-500">
+                  ${product.originalPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
 
-            <TabsContent value="specifications" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Specifications</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {product.specifications ? (
-                    <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(product.specifications).map(([key, value]) => (
-                        <div key={key} className="border-b pb-2">
-                          <dt className="font-semibold text-sm text-muted-foreground uppercase">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                          </dt>
-                          <dd className="mt-1">{String(value)}</dd>
+            <p className="font-mono text-lg leading-relaxed mb-8 border-l-4 border-neon-yellow pl-4">
+              {product.description}
+            </p>
+
+            {/* Actions */}
+            <div className="space-y-4 p-6 border-4 border-black bg-gray-50 shadow-brutal">
+              <div className="flex gap-4">
+                <BrutalInput 
+                  type="number" 
+                  defaultValue="1" 
+                  min="1" 
+                  className="w-24 text-center font-heading text-xl" 
+                />
+                <BrutalButton fullWidth className="text-xl py-6 bg-black text-white hover:bg-neon-green hover:text-black hover:border-black">
+                  <ShoppingCart className="w-6 h-6 mr-2" /> Agregar al Carrito
+                </BrutalButton>
+              </div>
+              <BrutalButton fullWidth variant="outline" className="py-4">
+                Comprar Ahora - Un Clic
+              </BrutalButton>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-4 mt-8">
+              {[
+                { icon: Truck, text: "Envío Rápido" },
+                { icon: Shield, text: "Pago Seguro" },
+                { icon: RotateCcw, text: "30 Días Devolución" }
+              ].map((badge, i) => (
+                <div key={i} className="flex flex-col items-center text-center p-4 border-2 border-gray-200 hover:border-black transition-colors">
+                  <badge.icon className="w-8 h-8 mb-2" />
+                  <span className="font-mono text-xs font-bold uppercase">{badge.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Section */}
+      <div className="mt-20">
+        <div className="flex flex-wrap border-b-4 border-black">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-8 py-4 font-heading text-xl uppercase transition-all ${
+                activeTab === tab.id 
+                  ? 'bg-black text-white' 
+                  : 'bg-white text-black hover:bg-gray-100'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        
+        <BrutalCard className="border-t-0 rounded-none p-8 min-h-[300px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {activeTab === 'description' && (
+                <div className="prose prose-lg max-w-none font-mono">
+                  <h3 className="font-heading uppercase text-2xl mb-4">Especificaciones Técnicas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                    {Object.entries(product.specs || {}).map(([key, value]) => (
+                      <div key={key} className="flex justify-between border-b-2 border-gray-200 py-2">
+                        <span className="font-bold uppercase text-gray-500">{key}</span>
+                        <span>{value as string}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {activeTab === 'reviews' && (
+                <div className="text-center py-12">
+                  <p className="font-heading text-2xl text-gray-400">Módulo de Reseñas Cargando...</p>
+                </div>
+              )}
+              {activeTab === 'comments' && (
+                <div className="space-y-6">
+                  <h3 className="font-heading uppercase text-2xl mb-6">Comentarios de la Comunidad</h3>
+                  <div className="space-y-4">
+                    {comments.map((comment) => (
+                      <div key={comment.id} className="border-2 border-black p-4 bg-gray-50 hover:bg-white hover:shadow-brutal transition-all">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-8 h-8 bg-neon-pink rounded-none flex items-center justify-center border-2 border-black">
+                            <User className="w-4 h-4 text-white" />
+                          </div>
+                          <span className="font-heading uppercase text-lg">{comment.user}</span>
+                          <span className="font-mono text-xs text-gray-500 ml-auto">{comment.date}</span>
                         </div>
-                      ))}
-                    </dl>
-                  ) : (
-                    <Text muted>No specifications available</Text>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="reviews" className="mt-6">
-              <ReviewList productId={product.id} />
-            </TabsContent>
-
-            <TabsContent value="price-history" className="mt-6">
-              <PriceHistoryChart productId={product.id} days={30} />
-            </TabsContent>
-          </Tabs>
-        </motion.div>
-
-        {/* 3D Viewer */}
-        {product.model3dUrl && (
-          <motion.div
-            className="mb-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Product3DViewer modelUrl={product.model3dUrl} productName={product.name} />
-          </motion.div>
-        )}
-      </motion.div>
-      </Container>
+                        <p className="font-mono pl-11">{comment.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-8 pt-6 border-t-2 border-gray-200">
+                    <h4 className="font-heading uppercase text-lg mb-4">Deja un comentario</h4>
+                    <div className="flex gap-4">
+                      <BrutalInput placeholder="Escribe tu comentario..." className="flex-1" />
+                      <BrutalButton>Enviar</BrutalButton>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {activeTab === 'shipping' && (
+                <div className="font-mono space-y-4">
+                  <p><strong>Envío Estándar:</strong> 3-5 Días Hábiles</p>
+                  <p><strong>Envío Exprés:</strong> 1-2 Días Hábiles</p>
+                  <p><strong>Internacional:</strong> 7-14 Días Hábiles</p>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </BrutalCard>
+      </div>
     </div>
   );
 }
 
+export default ProductDetail;
