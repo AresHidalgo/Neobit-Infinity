@@ -1,17 +1,19 @@
-import { Link } from 'react-router-dom';
-import { categories } from '@/data/categories.mock';
-import { routesConfig } from '@/config/app.config';
-import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
-import { BrutalButton } from '@/shared/components/brutal/BrutalButton';
-import { ArrowRight } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { categories } from "@/data/categories.mock";
+import { routesConfig } from "@/config/app.config";
+import { BrutalCard } from "@/shared/components/brutal/BrutalCard";
+import { ArrowRight } from "lucide-react";
 
 export function CategoryQuick() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories.map((category, index) => (
-        <Link key={category.id} to={`${routesConfig.products.search}?category=${category.id}`}>
-          <BrutalCard 
-            hoverable 
+      {categories.map((category) => (
+        <Link
+          key={category.id}
+          to={`${routesConfig.products.search}?category=${category.id}`}
+        >
+          <BrutalCard
+            hoverable
             className="h-full flex flex-col justify-between group bg-white hover:bg-neon-yellow transition-colors"
           >
             <div>

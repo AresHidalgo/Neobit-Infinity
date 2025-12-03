@@ -1,14 +1,14 @@
-import { Link } from 'react-router-dom';
-import { useCartStore } from '@/store/cart.store';
-import { routesConfig } from '@/config/app.config';
-import { BrutalCard } from '@/shared/components/brutal/BrutalCard';
-import { BrutalButton } from '@/shared/components/brutal/BrutalButton';
-import { BrutalInput } from '@/shared/components/brutal/BrutalInput';
-import { Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from "react-router-dom";
+import { useCartStore } from "@/store/cart.store";
+import { routesConfig } from "@/config/app.config";
+import { BrutalCard } from "@/shared/components/brutal/BrutalCard";
+import { BrutalButton } from "@/shared/components/brutal/BrutalButton";
+import { BrutalInput } from "@/shared/components/brutal/BrutalInput";
+import { Trash2, ArrowRight, ShoppingBag } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Cart() {
-  const { items, removeItem, updateQuantity, total } = useCartStore();
+  const { items, total } = useCartStore();
 
   if (items.length === 0) {
     return (
@@ -16,7 +16,9 @@ export function Cart() {
         <div className="mb-8 p-8 border-4 border-black rounded-full bg-neon-yellow">
           <ShoppingBag className="w-16 h-16" />
         </div>
-        <h1 className="font-heading text-4xl uppercase mb-4">Tu Carrito Está Vacío</h1>
+        <h1 className="font-heading text-4xl uppercase mb-4">
+          Tu Carrito Está Vacío
+        </h1>
         <p className="font-mono text-lg text-gray-500 mb-8 max-w-md">
           Parece que aún no has agregado ningún producto a tu inventario.
         </p>
@@ -47,16 +49,20 @@ export function Cart() {
               >
                 <BrutalCard className="flex flex-col md:flex-row gap-6 items-center p-4">
                   <div className="w-full md:w-32 aspect-square border-2 border-black bg-gray-100 shrink-0">
-                    <img 
-                      src={item.image || 'https://via.placeholder.com/150'} 
-                      alt={item.name} 
+                    <img
+                      src={item.image || "https://via.placeholder.com/150"}
+                      alt={item.productName}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   <div className="flex-1 text-center md:text-left">
-                    <h3 className="font-heading text-xl uppercase mb-1">{item.name}</h3>
-                    <p className="font-mono text-sm text-gray-500 mb-2">Variante: Por defecto</p>
+                    <h3 className="font-heading text-xl uppercase mb-1">
+                      {item.productName}
+                    </h3>
+                    <p className="font-mono text-sm text-gray-500 mb-2">
+                      Variante: Por defecto
+                    </p>
                     <p className="font-mono font-bold text-neon-blue text-lg">
                       ${item.price.toFixed(2)}
                     </p>
@@ -64,8 +70,39 @@ export function Cart() {
 
                   <div className="flex items-center gap-4">
                     <div className="flex items-center border-2 border-black">
-                      <button 
-                        onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))}
+                      <button
+                        onClick={() => {
+                          const currentItem = items.find(
+                            (i) => i.productId === item.productId
+                          );
+                          if (currentItem && currentItem.quantity > 1) {
+                            const updatedItems = items.map((i) =>
+                              i.productId === item.productId
+                                ? {
+                                    ...i,
+                                    quantity: i.quantity - 1,
+                                    subtotal: i.price * (i.quantity - 1),
+                                  }
+                                : i
+                            );
+                            const newSubtotal = updatedItems.reduce(
+                              (sum, i) => sum + i.subtotal,
+                              0
+                            );
+                            useCartStore.getState().setCart({
+                              items: updatedItems,
+                              itemCount: updatedItems.reduce(
+                                (sum, i) => sum + i.quantity,
+                                0
+                              ),
+                              subtotal: newSubtotal,
+                              tax: 0,
+                              shipping: 0,
+                              discount: 0,
+                              total: newSubtotal,
+                            });
+                          }
+                        }}
                         className="px-3 py-1 hover:bg-black hover:text-white transition-colors font-mono font-bold"
                       >
                         -
@@ -73,15 +110,61 @@ export function Cart() {
                       <span className="px-4 py-1 font-mono font-bold border-x-2 border-black min-w-[3rem] text-center">
                         {item.quantity}
                       </span>
-                      <button 
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                      <button
+                        onClick={() => {
+                          const updatedItems = items.map((i) =>
+                            i.productId === item.productId
+                              ? {
+                                  ...i,
+                                  quantity: i.quantity + 1,
+                                  subtotal: i.price * (i.quantity + 1),
+                                }
+                              : i
+                          );
+                          const newSubtotal = updatedItems.reduce(
+                            (sum, i) => sum + i.subtotal,
+                            0
+                          );
+                          useCartStore.getState().setCart({
+                            items: updatedItems,
+                            itemCount: updatedItems.reduce(
+                              (sum, i) => sum + i.quantity,
+                              0
+                            ),
+                            subtotal: newSubtotal,
+                            tax: 0,
+                            shipping: 0,
+                            discount: 0,
+                            total: newSubtotal,
+                          });
+                        }}
                         className="px-3 py-1 hover:bg-black hover:text-white transition-colors font-mono font-bold"
                       >
                         +
                       </button>
                     </div>
-                    <button 
-                      onClick={() => removeItem(item.productId)}
+                    <button
+                      onClick={() => {
+                        const updatedItems = items.filter(
+                          (i) => i.productId !== item.productId
+                        );
+                        const newSubtotal = updatedItems.reduce(
+                          (sum, i) => sum + i.subtotal,
+                          0
+                        );
+                        useCartStore.getState().setCart({
+                          items: updatedItems,
+                          itemCount: updatedItems.reduce(
+                            (sum, i) => sum + i.quantity,
+                            0
+                          ),
+                          subtotal: newSubtotal,
+                          tax: 0,
+                          shipping: 0,
+                          discount: 0,
+                          total: newSubtotal,
+                        });
+                      }}
                       className="p-2 border-2 border-red-500 hover:bg-red-500 hover:text-white transition-colors"
                       aria-label="Eliminar del carrito"
                     >
@@ -104,7 +187,7 @@ export function Cart() {
             <h2 className="font-heading text-3xl uppercase mb-8 border-b-4 border-black pb-4">
               Resumen
             </h2>
-            
+
             <div className="space-y-4 mb-8 font-mono">
               <div className="flex justify-between text-lg">
                 <span>Subtotal</span>
@@ -123,9 +206,9 @@ export function Cart() {
             </div>
 
             <Link to={routesConfig.checkout}>
-              <BrutalButton 
-                fullWidth 
-                size="lg" 
+              <BrutalButton
+                fullWidth
+                size="lg"
                 className="bg-black text-white hover:bg-neon-pink hover:text-black mb-4"
               >
                 Proceder al Pago
@@ -134,8 +217,8 @@ export function Cart() {
             </Link>
 
             <Link to={routesConfig.products.search}>
-              <BrutalButton 
-                fullWidth 
+              <BrutalButton
+                fullWidth
                 variant="outline"
                 className="hover:bg-gray-100"
               >
